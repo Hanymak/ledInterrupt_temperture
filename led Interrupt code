@@ -1,0 +1,85 @@
+/*This code is to blink a led
+ * depending on the state of 
+ * pin 2 Where a class for the 
+ * funtions and state of the pin
+ * is made. The led status is updated
+ * on a serial montior.
+ * Written By Hany Makhlouf on 25/6/2018
+ * Edited on 30/6/2018
+ */
+#define BOUNCE_DURATION 200   // define an appropriate bounce time in ms for your switches
+
+
+#include "Arduino.h"
+class Morse
+{
+  public:
+    Morse(int pin);
+    volatile byte state = LOW;
+    void toggle();
+    void debounce();
+    void serial();
+    volatile unsigned long bounceTime=0; // variable to hold ms count to debounce a pressed switch
+
+    
+  private:
+    int _pin;
+};
+Morse::Morse(int pin)//to set input pin number to be used
+{
+
+  pinMode(pin, OUTPUT);
+  _pin = pin;
+}
+
+void Morse::serial(){//to print state of led
+if(digitalRead(13)){// to read led state
+  
+  Serial.println("on");
+  }
+  else{
+  Serial.println("off");
+  }
+  
+}
+void Morse::toggle(){//to change led state
+  state=!state;
+}
+
+void Morse::debounce()
+{
+   if(millis() > bounceTime)  //This function to handle bouncing time of the button and also after testing i found that 
+   //It is the best to handle the button i am working with
+ {
+  
+    toggle();
+    digitalWrite(_pin, state);
+  serial();
+     // Your code here to handle new button press ?
+     bounceTime = millis() + BOUNCE_DURATION;  // To set the new bounce accourding to millis function
+
+ } 
+}
+
+int set_Pressed=0;
+Morse morse(13);
+void blink(){
+morse.debounce();
+}
+int InterruptPin=2;
+void setup()
+{  
+  Serial.begin(9600);
+  pinMode(InterruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(InterruptPin), blink, FALLING);
+  
+  }
+
+void loop()
+{ 
+  if(digitalRead(13)&!set_Pressed){// to read led state
+  set_Pressed=1;
+  Serial.println("Pressed");
+  }
+ }
+
