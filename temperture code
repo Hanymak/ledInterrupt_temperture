@@ -1,0 +1,19 @@
+/*This code is to measure temperture using LM-35 temperture sensor
+ */
+float tempC;
+int reading;
+int tempPin = 0;
+
+void setup()
+{
+analogReference(INTERNAL);//To set reference to be 1.1V to correctly in the range from 1.1-5V
+Serial.begin(9600);//to intilize serial monitor
+}
+
+void loop()
+{
+reading = analogRead(tempPin);//to read pin voltage
+tempC = reading / 9.31;//shortcut to ADC to calculate the temp
+Serial.println(tempC);//temp is previewed on serial monitor
+delay(3000);//three seconds for each reading
+}
